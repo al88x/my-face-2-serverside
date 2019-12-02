@@ -84,7 +84,7 @@ public class PostsService extends DatabaseService {
         jdbi.withHandle(handle ->
                 handle.createUpdate(
                         "UPDATE posts SET " +
-                                "sender = :sender, " +
+                                "sender = :senderId, " +
                                 "message = :message, " +
                                 "image_url = :imageUrl, " +
                                 "timestamp = :timestamp " +

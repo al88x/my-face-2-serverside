@@ -14,7 +14,7 @@ public class UpdatePost {
     private String imageUrl;
     private Date timestamp;
 
-    public long getSender() {
+    public Long getSender() {
         return sender;
     }
 
