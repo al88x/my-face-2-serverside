@@ -89,7 +89,7 @@ public class CommentsService extends DatabaseService {
         jdbi.withHandle(handle ->
                 handle.createUpdate(
                         "UPDATE comments SET " +
-                                "message = :message, " +
+                                "message = :message " +
                                 "WHERE id = :id")
                         .bind("id", id)
                         .bind("message", comment.getMessage())

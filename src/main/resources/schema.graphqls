@@ -1,0 +1,25 @@
+schema {
+    query: Query
+}
+
+type Query{
+    postById(id:ID): Post
+    allPosts(sender: ID):[Post]
+}
+
+type Post{
+    id:ID
+    message:String
+    imageUrl:String
+    user:User
+    comments:[Comment]
+}
+type Comment{
+    user:User
+    message:String
+}
+
+type User{
+    firstName: String
+    lastName: String
+}
