@@ -1,6 +1,7 @@
 package uk.co.techswitch.myface.controllers.api;
 
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.co.techswitch.myface.models.api.passwords.AuthenticationCredentials;
@@ -17,22 +18,18 @@ import java.util.List;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final UsersService usersService;
 
-
-    public AuthenticationController(AuthenticationService authenticationService, UsersService usersService) {
+    public AuthenticationController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
-        this.usersService = usersService;
     }
 
     @PostMapping(value = "/signup")
-    public void createPassword(@ModelAttribute @Valid AuthenticationCredentials authenticationCredentials) {
-        List<User> users = usersService.searchUsers(new UsersFilter(authenticationCredentials.getUserName()));
-        authenticationService.createPassword(users.get(0).getId(), authenticationCredentials);
+    public void createPassword(@RequestHeader("Authorization") String credentials) {
+        authenticationService.createPassword(credentials);
     }
 
     @PostMapping(value = "/signin")
-    public ResponseEntity checkPassword(@ModelAttribute @Valid AuthenticationCredentials credentials){
+    public ResponseEntity checkPassword(@RequestHeader("Authorization") String credentials){
         return authenticationService.checkPassword(credentials);
     }
 }

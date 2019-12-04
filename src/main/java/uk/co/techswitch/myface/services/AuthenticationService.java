@@ -25,9 +25,12 @@ public class AuthenticationService extends DatabaseService {
         this.userService = userService;
     }
 
-    public void createPassword(long userId, AuthenticationCredentials authenticationCredentials) {
+    public void createPassword(String credentials) {
+        AuthenticationCredentials credentialsDecoded = new AuthenticationCredentials(credentials);
+        List<User> users = userService.searchUsers(new UsersFilter(credentialsDecoded.getUserName()));
+        long userId = users.get(0).getId();
         String salt = getSalt();
-        String hashedPassword = get_SHA_256_SecurePassword(authenticationCredentials.getPassword(), salt);
+        String hashedPassword = get_SHA_256_SecurePassword(credentialsDecoded.getPassword(), salt);
 
         jdbi.withHandle(handle ->
                 handle.createUpdate(
@@ -41,6 +44,27 @@ public class AuthenticationService extends DatabaseService {
                         .execute());
     }
 
+    public ResponseEntity checkPassword(String credentials) {
+
+        AuthenticationCredentials credentialsDecoded = new AuthenticationCredentials(credentials);
+
+        List<User> users = userService.searchUsers(new UsersFilter(credentialsDecoded.getUserName()));
+        long userId = users.get(0).getId();
+        Authentication authenticationCredentialsFromDatabase = jdbi.withHandle(handle ->
+                handle.createQuery(
+                        "SELECT * FROM passwords " +
+                                "WHERE " +
+                                "user_id = :userId;")
+                        .bind("userId", userId)
+                        .mapToBean(Authentication.class)
+                        .one());
+
+        String hashedPassword = get_SHA_256_SecurePassword(credentialsDecoded.getPassword(), authenticationCredentialsFromDatabase.getSalt());
+        if(hashedPassword.equals(authenticationCredentialsFromDatabase.getHashedPassword())){
+            return new ResponseEntity(new AuthenticationModel("Sign in successfully"), HttpStatus.OK);
+        }
+        return new ResponseEntity<String>("Unauthorized",HttpStatus.UNAUTHORIZED);
+    }
 
     private String getSalt() {
         return RandomStringUtils.randomAlphabetic(6);
@@ -63,23 +87,5 @@ public class AuthenticationService extends DatabaseService {
         return generatedPassword;
     }
 
-    public ResponseEntity checkPassword(AuthenticationCredentials credentials) {
 
-        List<User> users = userService.searchUsers(new UsersFilter(credentials.getUserName()));
-        long userId = users.get(0).getId();
-        Authentication authenticationCredentialsFromDatabase = jdbi.withHandle(handle ->
-                handle.createQuery(
-                        "SELECT * FROM passwords " +
-                                "WHERE " +
-                                "user_id = :userId;")
-                        .bind("userId", userId)
-                        .mapToBean(Authentication.class)
-                        .one());
-
-        String hashedPassword = get_SHA_256_SecurePassword(credentials.getPassword(), authenticationCredentialsFromDatabase.getSalt());
-        if(hashedPassword.equals(authenticationCredentialsFromDatabase.getHashedPassword())){
-            return new ResponseEntity(new AuthenticationModel("Sign in successfully"), HttpStatus.OK);
-        }
-        return new ResponseEntity<String>("Unauthorized",HttpStatus.UNAUTHORIZED);
-    }
 }
