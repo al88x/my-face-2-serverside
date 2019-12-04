@@ -1,6 +1,6 @@
 package uk.co.techswitch.myface.models.database;
 
-public class Password {
+public class Authentication {
     private long id;
     private long userId;
     private String hashedPassword;

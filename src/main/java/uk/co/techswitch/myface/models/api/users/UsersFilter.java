@@ -9,6 +9,11 @@ public class UsersFilter extends Filter {
     private String firstName;
     private String lastName;
 
+
+    public UsersFilter(String username) {
+        this.username = username;
+    }
+
     public String getUsername() {
         return username;
     }

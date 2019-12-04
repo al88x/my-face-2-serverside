@@ -33,6 +33,8 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.2.1.RELEASE'
     compile group: 'org.jdbi', name: 'jdbi3-core', version: '3.10.1'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.18'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+
 
     implementation 'com.graphql-java:graphql-java:11.0'
     implementation 'com.graphql-java:graphql-java-spring-boot-starter-webmvc:1.0'
