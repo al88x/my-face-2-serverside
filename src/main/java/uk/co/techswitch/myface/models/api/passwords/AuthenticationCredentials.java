@@ -2,7 +2,7 @@ package uk.co.techswitch.myface.models.api.passwords;
 
 import javax.validation.constraints.NotNull;
 
-public class CreateAuthentication {
+public class AuthenticationCredentials {
 
     @NotNull
     private String userName;

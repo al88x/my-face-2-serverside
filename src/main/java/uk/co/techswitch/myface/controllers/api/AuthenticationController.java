@@ -1,18 +1,15 @@
 package uk.co.techswitch.myface.controllers.api;
 
 
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import uk.co.techswitch.myface.models.api.passwords.CreateAuthentication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import uk.co.techswitch.myface.models.api.passwords.AuthenticationCredentials;
 import uk.co.techswitch.myface.models.api.users.UsersFilter;
 import uk.co.techswitch.myface.models.database.User;
 import uk.co.techswitch.myface.services.AuthenticationService;
 import uk.co.techswitch.myface.services.UsersService;
 
 import javax.validation.Valid;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -29,10 +26,13 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/signup")
-    public void createPassword(@ModelAttribute @Valid CreateAuthentication createAuthentication) {
-        List<User> users = usersService.searchUsers(new UsersFilter(createAuthentication.getUserName()));
+    public void createPassword(@ModelAttribute @Valid AuthenticationCredentials authenticationCredentials) {
+        List<User> users = usersService.searchUsers(new UsersFilter(authenticationCredentials.getUserName()));
+        authenticationService.createPassword(users.get(0).getId(), authenticationCredentials);
+    }
 
-
-        authenticationService.createPassword(users.get(0).getId(), createAuthentication);
+    @PostMapping(value = "/signin")
+    public ResponseEntity checkPassword(@ModelAttribute @Valid AuthenticationCredentials credentials){
+        return authenticationService.checkPassword(credentials);
     }
 }

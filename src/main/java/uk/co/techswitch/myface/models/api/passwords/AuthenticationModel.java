@@ -4,25 +4,17 @@ import uk.co.techswitch.myface.models.database.Authentication;
 
 public class AuthenticationModel {
 
-    private final Authentication authentication;
+    private String message;
 
-    public AuthenticationModel(Authentication authentication) {
-        this.authentication = authentication;
+    public AuthenticationModel(String message) {
+        this.message = message;
     }
 
-    public long getId(){
-       return authentication.getId();
+    public String getMessage() {
+        return message;
     }
 
-    public long getUserId(){
-        return authentication.getUserId();
-    }
-
-    public String getHashedPassword(){
-        return authentication.getHashedPassword();
-    }
-
-    public String getSalt(){
-        return authentication.getSalt();
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
